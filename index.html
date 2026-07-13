@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Command Board</title>
+    <title>Korat City Fire Brigade - Fire Command Board</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -30,12 +30,12 @@
             <div class="bg-black p-1 rounded-full text-lg md:text-2xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow">🚨</div>
             <div>
                 <h1 class="text-base md:text-xl lg:text-2xl font-black tracking-wide uppercase neon-text-white">Fire Command Board</h1>
-                <p class="text-[11px] md:text-xs font-bold text-yellow-200">ความถี่กลางสาธารณภัย 161.200 MHz.</p>
+                <p class="text-[11px] md:text-xs font-bold text-yellow-200">งานศูนย์ป้องกันและบรรเทาสาธารณภัย เทศบาลนครนครราชสีมา</p>
             </div>
         </div>
         <div class="flex flex-col items-center sm:items-end gap-1">
             <div id="clock" class="text-2xl md:text-3xl lg:text-4xl font-mono font-black neon-text-yellow">00:00:00</div>
-            <p class="text-[10px] md:text-xs font-bold text-white">Desige By ครูเฉลิมสอนดับเพลิง</p>
+            <p class="text-[10px] md:text-xs font-bold text-white">วิทยุสื่อสาร: 162.225 MHz.</p>
             <div id="par-alert-box" class="hidden mt-1 bg-red-600 border border-white text-white px-2 py-1.5 rounded text-[10px] md:text-xs font-black animate-pulse shadow-lg flex items-center gap-2">
                 <span>⚠️ ได้เวลาเช็กยอด PAR!</span>
                 <button onclick="stopPARAlarm()" class="bg-black text-yellow-400 px-1.5 py-0.5 rounded text-[9px] uppercase hover:bg-gray-900 border border-yellow-400">ปิดเตือน</button>
@@ -268,9 +268,14 @@
             currentMarker = L.marker(defaultCoords).addTo(map).bindPopup('พิกัดปัจจุบัน').openPopup();
             requestCurrentLocation();
 
+            // รองรับทั้งระบบ Mouse (PC) และ Touch (iPad/Tablet)
             map.on('mousedown', startMapDraw);
             map.on('mousemove', duringMapDraw);
             window.addEventListener('mouseup', endMapDraw);
+
+            map.on('touchstart', startMapTouchDraw);
+            map.on('touchmove', duringMapTouchDraw);
+            window.addEventListener('touchend', endMapDraw);
         }
 
         function toggleMapInteraction() {
@@ -287,6 +292,7 @@
             }
         }
 
+        // --- ฟังก์ชันควบคุมสำหรับการลากเมาส์ (PC) ---
         function startMapDraw(e) {
             if (!isDrawMode) return;
             currentLine = L.polyline([e.latlng], { color: penColor, weight: 4, opacity: 0.85 }).addTo(map);
@@ -295,6 +301,22 @@
         function duringMapDraw(e) {
             if (!isDrawMode || !currentLine) return;
             currentLine.addLatLng(e.latlng);
+        }
+
+        // --- ฟังก์ชันควบคุมสำหรับการใช้นิ้ว/ปากกา (iPad / Touch Screen) ---
+        function startMapTouchDraw(e) {
+            if (!isDrawMode) return;
+            // ดึงพิกัดจุดสัมผัสแรก แปลงเป็นค่าละติจูด/ลองจิจูดบนแผนที่
+            const touch = e.originalEvent.touches[0];
+            const latlng = map.mouseEventToLatLng(touch);
+            currentLine = L.polyline([latlng], { color: penColor, weight: 4, opacity: 0.85 }).addTo(map);
+        }
+
+        function duringMapTouchDraw(e) {
+            if (!isDrawMode || !currentLine) return;
+            const touch = e.originalEvent.touches[0];
+            const latlng = map.mouseEventToLatLng(touch);
+            currentLine.addLatLng(latlng);
         }
 
         function endMapDraw() {
