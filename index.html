@@ -2,8 +2,8 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Korat City Fire Brigade - Fire Command Board</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fire Command Board</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -13,7 +13,7 @@
         .neon-text-white { color: #ffffff; text-shadow: 0 0 12px rgba(255,255,255,0.9); }
         .map-wrapper { position: relative; width: 100%; height: 400px; }
         @media (min-width: 768px) { .map-wrapper { height: 550px; } }
-        #live-map { width: 100%; height: 100%; z-index: 1; }
+        #live-map { width: 100%; height: 100%; z-index: 1; touch-action: none; }
         .tactical-icon { background: rgba(0, 0, 0, 0.85); border: 2px solid #fff; border-radius: 8px; text-align: center; font-size: 20px; line-height: 30px; box-shadow: 0 0 8px rgba(0,0,0,0.5); cursor: move; }
         .tactical-icon:hover { border-color: #ffcc00; }
         
@@ -29,13 +29,13 @@
         <div class="flex items-center space-x-3 text-center sm:text-left">
             <div class="bg-black p-1 rounded-full text-lg md:text-2xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow">🚨</div>
             <div>
-                <h1 class="text-base md:text-xl lg:text-2xl font-black tracking-wide uppercase neon-text-white">Fire Command Board</h1>
-                <p class="text-[11px] md:text-xs font-bold text-yellow-200">งานศูนย์ป้องกันและบรรเทาสาธารณภัย เทศบาลนครนครราชสีมา</p>
+                <h1 class="text-base md:text-xl lg:text-2xl font-black tracking-wide uppercase neon-text-white">e-Fire Command Board</h1>
+                <p class="text-[11px] md:text-xs font-bold text-yellow-200">ระบบควบคุมบัญชาการเหตุการณ์ ณ จุดเกิดเหตุ (Design by ครูเฉลิมสอนดับเพลิง)</p>
             </div>
         </div>
         <div class="flex flex-col items-center sm:items-end gap-1">
             <div id="clock" class="text-2xl md:text-3xl lg:text-4xl font-mono font-black neon-text-yellow">00:00:00</div>
-            <p class="text-[10px] md:text-xs font-bold text-white">วิทยุสื่อสาร: 162.225 MHz.</p>
+            <p class="text-[10px] md:text-xs font-bold text-white">ความถี่กลางสาธารณภัย: 161.200 MHz.</p>
             <div id="par-alert-box" class="hidden mt-1 bg-red-600 border border-white text-white px-2 py-1.5 rounded text-[10px] md:text-xs font-black animate-pulse shadow-lg flex items-center gap-2">
                 <span>⚠️ ได้เวลาเช็กยอด PAR!</span>
                 <button onclick="stopPARAlarm()" class="bg-black text-yellow-400 px-1.5 py-0.5 rounded text-[9px] uppercase hover:bg-gray-900 border border-yellow-400">ปิดเตือน</button>
@@ -46,12 +46,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <div class="bg-gray-900 p-3 md:p-4 rounded-lg shadow border border-gray-800 space-y-4 flex flex-col lg:col-span-2">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-gray-700 pb-2">
-                <h2 class="text-sm md:text-base lg:text-lg font-bold text-yellow-400 flex items-center gap-2">🎨 แฝนที่ปฏิบัติการ <span id="gps-status" class="text-xs text-gray-400 font-normal"></span></h2>
+                <h2 class="text-sm md:text-base lg:text-lg font-bold text-yellow-400 flex items-center gap-2">🎨 แผนที่ปฏิบัติการ <span id="gps-status" class="text-xs text-gray-400 font-normal"></span></h2>
                 <div class="flex flex-wrap gap-1.5 items-center">
                     <button onclick="setPenColor('#ef4444')" class="w-5 h-5 rounded-full bg-red-500 border-2 border-white" title="สีแดง"></button>
                     <button onclick="setPenColor('#3b82f6')" class="w-5 h-5 rounded-full bg-blue-500" title="สีน้ำเงิน"></button>
                     <button onclick="setPenColor('#22c55e')" class="w-5 h-5 rounded-full bg-green-500" title="สีเขียว"></button>
-                    <button onclick="toggleMapInteraction()" id="btn-mode" class="text-[11px] md:text-xs bg-gray-700 px-2 py-1 rounded font-bold hover:bg-gray-600 ml-1">🗺️ เลื่อนแผนที่</button>
+                    <button onclick="toggleMapInteraction()" id="btn-mode" class="text-[11px] md:text-xs bg-gray-700 px-2 py-1 rounded font-bold hover:bg-gray-600 ml-1 text-white">🗺️ เลื่อนแผนที่</button>
                     <button onclick="undoLastLine()" class="text-[11px] md:text-xs bg-amber-700 px-2 py-1 rounded font-bold hover:bg-amber-600">↩️ ลบเส้นล่าสุด</button>
                     <button onclick="clearAllLines()" class="text-[11px] md:text-xs bg-red-800 px-2 py-1 rounded font-bold hover:bg-red-700">🗑️ ล้างเส้น</button>
                     <button onclick="requestCurrentLocation()" class="text-[11px] md:text-xs bg-amber-600 px-2 py-1 rounded font-bold hover:bg-amber-500">📍 ดึง GPS</button>
@@ -87,8 +87,7 @@
                     <h2 class="text-sm md:text-base font-bold text-yellow-400">🚒 ทรัพยากร (Check-in)</h2>
                     <button onclick="openResourceModal()" class="text-[11px] md:text-xs bg-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-500">+ เพิ่มหน่วยงาน</button>
                 </div>
-                <div id="resource-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1 flex flex-col scrollbar-thin">
-                    </div>
+                <div id="resource-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1 flex flex-col scrollbar-thin"></div>
             </div>
 
             <div class="bg-gray-900 p-3 md:p-4 rounded-lg shadow border border-gray-800">
@@ -140,15 +139,15 @@
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">1. ชื่อหน่วยงาน/ทีม:</label>
-                    <input type="text" id="modal-r-agency" placeholder="เช่น ดับเพลิงเทศบาลนครราชสีมา" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500 font-bold">
+                    <input type="text" id="modal-r-agency" placeholder="เช่น เทศบาล......" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500 font-bold">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">2. ผู้ควบคุมทีม (ชื่อ-นามสกุล):</label>
-                    <input type="text" id="modal-r-commander" placeholder="เช่น ร.ต.อ. สมชาย ดีใจ" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <input type="text" id="modal-r-commander" placeholder="เช่น นายปกป้อง ผองภัย/ รหัสวิทยุ...." class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">3. ช่องทางการประสานงาน (โทร/วิทยุ):</label>
-                    <input type="text" id="modal-r-contact" placeholder="เช่น 081-xxxxxxx / ช่อง 2" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <input type="text" id="modal-r-contact" placeholder="เช่น โทร.081-xxxxxxx / ช่อง 2" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">4. จำนวนเจ้าหน้าที่ปฏิบัติงาน (คน):</label>
@@ -156,12 +155,12 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">5. ทรัพยากร/ยานพาหนะที่นำมาด้วย:</label>
-                    <textarea id="modal-r-assets" placeholder="เช่น รถบรรทุกน้ำ 10,000 ลิตร 1 คัน, เครื่องสูบน้ำ 1 ตัว" rows="3" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500"></textarea>
+                    <textarea id="modal-r-assets" placeholder="เช่น รถบรรทุกน้ำ 10,000 ลิตร 1 คัน" rows="3" class="w-full p-2 rounded bg-gray-950 text-white border border-gray-700 focus:outline-none focus:border-blue-500"></textarea>
                 </div>
             </div>
             <div class="flex gap-2 pt-2">
                 <button onclick="closeResourceModal()" class="w-1/3 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 rounded transition">ยกเลิก</button>
-                <button onclick="submitResourceFromModal()" class="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-black py-2 rounded shadow-md transition flex items-center justify-center gap-1">📍 ส่งลงแผนที่</button>
+                <button onclick="submitResourceFromModal()" class="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-black py-2 rounded shadow-md transition">📍 ส่งลงแผนที่</button>
             </div>
         </div>
     </div>
@@ -184,7 +183,7 @@
                     <textarea id="sop-custom-notes" rows="3" placeholder="กรอกแผนปฏิบัติการเพิ่มเติม..." class="w-full bg-gray-950 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-yellow-400"></textarea>
                 </div>
             </div>
-            <button onclick="saveSOPLocal()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded shadow-md">🎯 บันทึกแผน SOP ในเครื่อง</button>
+            <button onclick="saveSOPLocal()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded shadow-md">🎯 SOP-OK </button>
         </div>
     </div>
 
@@ -201,7 +200,8 @@
         let penColor = '#ef4444';
         let drawnLines = [];
         let currentLine = null;
-        let globalMarkers = {}; // เก็บออบเจกต์ Marker ของหน่วยงานแยกตาม ID สำหรับถอนกำลัง
+        let globalMarkers = {};
+        let isDrawing = false; // ตัวแปรสถานะเช็กการกดค้างวาดเส้น
 
         function updateClock() {
             const now = new Date();
@@ -301,13 +301,65 @@
             currentMarker = L.marker(defaultCoords).addTo(map).bindPopup('พิกัดปัจจุบัน').openPopup();
             requestCurrentLocation();
 
-            map.on('mousedown', startMapDraw);
-            map.on('mousemove', duringMapDraw);
-            window.addEventListener('mouseup', endMapDraw);
+            // ใช้ระบบจับพิกัดแบบ Native ผ่านผิวกระดาน Container map เพื่อตัดปัญหา Layer บังการสัมผัส
+            const mapContainer = document.getElementById('live-map');
 
-            map.on('touchstart', startMapTouchDraw);
-            map.on('touchmove', duringMapTouchDraw);
-            window.addEventListener('touchend', endMapDraw);
+            // เหตุการณ์เมาส์ (PC)
+            L.DomEvent.on(mapContainer, 'mousedown', function(e) {
+                if (!isDrawMode) return;
+                isDrawing = true;
+                let latlng = map.mouseEventToLatLng(e);
+                startDrawingLine(latlng);
+            });
+            L.DomEvent.on(mapContainer, 'mousemove', function(e) {
+                if (!isDrawMode || !isDrawing) return;
+                let latlng = map.mouseEventToLatLng(e);
+                continueDrawingLine(latlng);
+            });
+            L.DomEvent.on(window, 'mouseup', function() {
+                stopDrawingLine();
+            });
+
+            // เหตุการณ์สัมผัสหน้าจอ (iPad, Tablet, มือถือ) - มีคำสั่ง บล็อกการเลื่อนหน้าจอเบราว์เซอร์เด็ดขาด
+            L.DomEvent.on(mapContainer, 'touchstart', function(e) {
+                if (!isDrawMode) return;
+                if(e.touches.length === 1) {
+                    if(e.cancelable) e.preventDefault(); // บล็อกระบบเลื่อนจอของ iOS/Android
+                    isDrawing = true;
+                    let latlng = map.mouseEventToLatLng(e.touches[0]);
+                    startDrawingLine(latlng);
+                }
+            }, {passive: false});
+
+            L.DomEvent.on(mapContainer, 'touchmove', function(e) {
+                if (!isDrawMode || !isDrawing) return;
+                if(e.touches.length === 1) {
+                    if(e.cancelable) e.preventDefault(); // ป้องกันการดึงหน้าจอขยับ
+                    let latlng = map.mouseEventToLatLng(e.touches[0]);
+                    continueDrawingLine(latlng);
+                }
+            }, {passive: false});
+
+            L.DomEvent.on(window, 'touchend', function() {
+                stopDrawingLine();
+            });
+        }
+
+        // ฟังก์ชันประมวลผลการลากเส้นพิกัดกลาง
+        function startDrawingLine(latlng) {
+            currentLine = L.polyline([latlng], { color: penColor, weight: 5, opacity: 0.9 }).addTo(map);
+        }
+
+        function continueDrawingLine(latlng) {
+            if (currentLine) currentLine.addLatLng(latlng);
+        }
+
+        function stopDrawingLine() {
+            if (isDrawing && currentLine) {
+                drawnLines.push(currentLine);
+                currentLine = null;
+            }
+            isDrawing = false;
         }
 
         function toggleMapInteraction() {
@@ -317,45 +369,16 @@
                 btn.textContent = "โหมด: ✍️ วาดเส้น";
                 btn.className = "text-[11px] md:text-xs bg-blue-600 px-2 py-1 rounded font-bold ml-1 text-white";
                 map.dragging.disable();
+                map.touchZoom.disable();
+                map.doubleClickZoom.disable();
             } else {
                 btn.textContent = "โหมด: 🗺️ เลื่อนแผนที่";
                 btn.className = "text-[11px] md:text-xs bg-gray-700 px-2 py-1 rounded font-bold ml-1 text-white";
                 map.dragging.enable();
+                map.touchZoom.enable();
+                map.doubleClickZoom.enable();
             }
         }
-
-        function startMapDraw(e) {
-            if (!isDrawMode) return;
-            currentLine = L.polyline([e.latlng], { color: penColor, weight: 4, opacity: 0.85 }).addTo(map);
-        }
-
-        function duringMapDraw(e) {
-            if (!isDrawMode || !currentLine) return;
-            currentLine.addLatLng(e.latlng);
-        }
-
-        function startMapTouchDraw(e) {
-            if (!isDrawMode) return;
-            const touch = e.originalEvent.touches[0];
-            const latlng = map.mouseEventToLatLng(touch);
-            currentLine = L.polyline([latlng], { color: penColor, weight: 4, opacity: 0.85 }).addTo(map);
-        }
-
-        function duringMapTouchDraw(e) {
-            if (!isDrawMode || !currentLine) return;
-            const touch = e.originalEvent.touches[0];
-            const latlng = map.mouseEventToLatLng(touch);
-            currentLine.addLatLng(latlng);
-        }
-
-        function endMapDraw() {
-            if (currentLine) {
-                drawnLines.push(currentLine);
-                currentLine = null;
-            }
-        }
-
-        document.addEventListener('touchend', endMapDraw);
 
         function undoLastLine() {
             if (drawnLines.length > 0) {
@@ -377,7 +400,7 @@
         function spawnTacticalIcon(emoji, labelName) {
             const centerBounds = map.getCenter();
             const txtIcon = L.divIcon({ html: emoji, className: 'tactical-icon', iconSize: [32, 32], iconAnchor: [16, 16] });
-            const marker = L.marker(centerBounds, { icon: txtIcon, draggable: true }).addTo(map);
+            const marker = L.marker(centerBounds, { draggable: true }).setIcon(txtIcon).addTo(map);
             
             const popupNode = document.createElement('div');
             popupNode.innerHTML = `<b class="text-black">${labelName}</b><br>`;
@@ -406,7 +429,6 @@
             }
         }
 
-        // --- ระบบควบคุม Popup หน่วยงานสนับสนุน (NEW) ---
         function openResourceModal() {
             document.getElementById('modal-r-agency').value = '';
             document.getElementById('modal-r-commander').value = '';
@@ -429,12 +451,10 @@
 
             const itemId = "res_" + Date.now();
 
-            // 1. สร้างมาร์กเกอร์และผูกข้อมูลฉบับเต็มไว้บน Map ตัวไอคอนขยับย้ายได้
             const centerBounds = map.getCenter();
             const txtIcon = L.divIcon({ html: "🚒", className: 'tactical-icon', iconSize: [32, 32], iconAnchor: [16, 16] });
-            const resMarker = L.marker(centerBounds, { icon: txtIcon, draggable: true }).addTo(map);
+            const resMarker = L.marker(centerBounds, { draggable: true }).setIcon(txtIcon).addTo(map);
             
-            // ข้อมูล Pop-up เต็มรูปแบบบนหน้าต่างแฝนที่
             const popupContent = `
                 <div class="text-black p-1 text-xs font-sans min-w-[200px]">
                     <h4 class="font-black text-sm text-red-600 border-b border-gray-300 pb-1 mb-1">🚒 รายละเอียดหน่วยงาน</h4>
@@ -446,9 +466,8 @@
                     <div class="text-gray-700 bg-gray-100 p-1 rounded max-h-[60px] overflow-y-auto font-mono">${assets.replace(/\n/g, "<br>")}</div>
                 </div>`;
             resMarker.bindPopup(popupContent);
-            globalMarkers[itemId] = resMarker; // เก็บไว้สำหรับคำสั่งถอนกำลังภายนอกได้
+            globalMarkers[itemId] = resMarker;
 
-            // 2. สร้างแถบกล่องทรัพยากรแบบย่อ (ชื่อ + ทรัพยากร) ในแถบขวา
             const list = document.getElementById('resource-list');
             const div = document.createElement('div');
             div.id = itemId;
@@ -470,7 +489,6 @@
             list.appendChild(div);
             closeResourceModal();
             
-            // ขยับหน้าจอโฟกัสไปหาไอคอนใหม่บนแผนที่
             map.panTo(centerBounds);
             resMarker.openPopup();
             if (isDrawMode) toggleMapInteraction();
@@ -485,12 +503,10 @@
         }
 
         function removeDeployedResource(itemId) {
-            // ลบจากแผนที่
             if (globalMarkers[itemId]) {
                 map.removeLayer(globalMarkers[itemId]);
                 delete globalMarkers[itemId];
             }
-            // ลบแถบรายการขวาออก
             const el = document.getElementById(itemId);
             if (el) el.remove();
         }
@@ -511,7 +527,7 @@
                 customNotes: document.getElementById('sop-custom-notes').value
             };
             localStorage.setItem('SOP_Current_Log', JSON.stringify(sopData));
-            alert("💾 บันทึกแผนงาน SOP ลงในเบราว์เซอร์ของอุปกรณ์นี้สำเร็จ!");
+            alert("💾 จำลองการบันทึกแผนงาน SOP สำเร็จ!");
             closeChecklistModal();
         }
 
@@ -543,15 +559,15 @@
             const tbody = document.getElementById('scba-rows'); const rowId = "scba_" + Date.now(); const row = document.createElement('tr');
             row.id = rowId; row.className = "hover:bg-gray-800/50 transition";
             row.innerHTML = `
-                <td class="p-2"><input type="text" class="team-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-white text-xs focus:outline-none focus:border-red-500" placeholder="ชื่อทีม"></td>
-                <td class="p-2"><input type="text" class="name-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-white text-xs focus:outline-none focus:border-red-500" placeholder="ชื่อ/รหัส"></td>
-                <td class="p-2"><input type="number" class="bar-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-center font-bold text-yellow-400 text-xs focus:outline-none focus:border-red-500" value="300"></td>
+                <td class="p-2"><input type="text" class="team-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-white text-xs focus:outline-none" placeholder="ชื่อทีม"></td>
+                <td class="p-2"><input type="text" class="name-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-white text-xs focus:outline-none" placeholder="ชื่อ/รหัส"></td>
+                <td class="p-2"><input type="number" class="bar-input bg-gray-950 border border-gray-800 rounded p-1 w-full text-center font-bold text-yellow-400 text-xs focus:outline-none" value="300"></td>
                 <td class="p-2 font-mono text-center time-in">--:--</td>
                 <td class="p-2 font-mono text-center text-orange-400 whistle-time">--:--</td>
                 <td class="p-2 font-mono text-center text-red-500 exit-time">--:--</td>
                 <td class="p-2 text-center flex items-center justify-center gap-1.5">
-                    <button id="start-${rowId}" onclick="startSCBA('${rowId}', this)" class="bg-blue-600 hover:bg-blue-500 text-[10px] px-2 py-1 rounded font-bold transition">START</button>
-                    <button id="stop-${rowId}" onclick="stopSCBA('${rowId}')" class="bg-red-600 hover:bg-red-500 text-[10px] px-2 py-1 rounded font-bold hidden transition">STOP</button>
+                    <button id="start-${rowId}" onclick="startSCBA('${rowId}', this)" class="bg-blue-600 hover:bg-blue-500 text-[10px] px-2 py-1 rounded font-bold">START</button>
+                    <button id="stop-${rowId}" onclick="stopSCBA('${rowId}')" class="bg-red-600 hover:bg-red-500 text-[10px] px-2 py-1 rounded font-bold hidden">STOP</button>
                     <button onclick="removeSCBARow('${rowId}')" class="text-gray-500 hover:text-white ml-1">✕</button>
                 </td>`;
             tbody.appendChild(row);
